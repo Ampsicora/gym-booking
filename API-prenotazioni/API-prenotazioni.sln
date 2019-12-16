@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API-prenotazioni", "API-prenotazioni\API-prenotazioni.csproj", "{849C2EC7-269C-43A2-8747-266C08ECE9CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{849C2EC7-269C-43A2-8747-266C08ECE9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{849C2EC7-269C-43A2-8747-266C08ECE9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{849C2EC7-269C-43A2-8747-266C08ECE9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{849C2EC7-269C-43A2-8747-266C08ECE9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {473AA252-4532-450E-8101-1E15082001D8}
+	EndGlobalSection
+EndGlobal
