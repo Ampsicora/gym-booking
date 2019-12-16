@@ -1,4 +1,6 @@
-﻿using System;
+﻿using API_prenotazioni.Models;
+using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,11 +11,26 @@ namespace API_prenotazioni.Controllers
 {
     public class ValuesController : ApiController
     {
-        // GET api/values
-        public IEnumerable<string> Get()
+        public List<booking> Get()
         {
-            return new string[] { "value1", "value2" };
+            List<Booking> res;
+            using (var db = new palestraEntities())
+            {
+
+
+                res = db.Booking.ToList();
+                
+                var config = new MapperConfiguration(cfg => {
+                    cfg.CreateMap<Booking, booking>();
+                });
+                var mapper = new Mapper(config);
+                List<booking> cars = mapper.Map<List<Booking>, List<booking>>(res);
+
+                return cars;
+            }
         }
+
+
 
         // GET api/values/5
         public string Get(int id)
