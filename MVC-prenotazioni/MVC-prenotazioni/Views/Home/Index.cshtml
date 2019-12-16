@@ -1,4 +1,5 @@
-﻿@{
+﻿@model  List<MVC_prenotazioni.Models.booking>
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -10,22 +11,31 @@
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+            <input type="email" name="Insert e-mail" id="mail"/><label for="mail">Insert email</label>
+            if (@Model != null)
+            {
+                foreach (var x in @Model)
+                {
+                    <input type="radio" id="room"+ @x.date name="room" value="@Model" />
+                    <label for="room @Model">Room @Model - Description: @Model</label>
+                }
+
+            }
+            <input type="date" id="day" />
+            <label for="day">Giorno</label>
+            <input type="time" id="startime" name="Start" min="09:00" max="17:30" step="1800" />
+            <label for="starttime">Start time</label>
+            <input type="time" id="endtime" min="09:30" max="18:00" step="1800" />
+            <label for="starttime">End Time</label>
+            <input type="checkbox" id="equipment" />
+            <label for="equipment">Hai l'equipaggiamento?</label>
+            <input type="submit" />
+
+        }
+
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
     </div>
 </div>

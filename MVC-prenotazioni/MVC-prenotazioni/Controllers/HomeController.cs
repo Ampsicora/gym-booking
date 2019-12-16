@@ -1,6 +1,9 @@
-﻿using System;
+﻿using MVC_prenotazioni.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 
@@ -10,14 +13,45 @@ namespace MVC_prenotazioni.Controllers
     {
         public ActionResult Index()
         {
+            List<booking> ls = new List<booking>();
+            using (var conn = new HttpClient())
+            {
+                var req = conn.GetAsync("https://localhost:44360/api/values");
+                req.Wait();
+                var res = req.Result;
+                if (res.IsSuccessStatusCode)
+                {
+                    var data = res.Content.ReadAsStringAsync();
+                    data.Wait();
+                    ls = JsonConvert.DeserializeObject<List<booking>>(data.Result);
+                }
+
+            }
+            return View(ls);
+        }
+        [HttpPost]
+        public ActionResult Index(int id)
+        {
             return View();
         }
-
-        public ActionResult About()
+        public ActionResult DeleteBooking()
         {
-            ViewBag.Message = "Your application description page.";
+            List<booking> ls = new List<booking>();
+            using (var conn = new HttpClient())
+            {
+                var req = conn.GetAsync(@"https://localhost:44360/api/values");
+                req.Wait();
+                var res = req.Result;
+                if (res.IsSuccessStatusCode)
+                {
+                    var data = res.Content.ReadAsStringAsync();
+                    data.Wait();
+                    ls = JsonConvert.DeserializeObject<List<booking>>(data.Result);
+                }
+            }
 
-            return View();
+
+            return View(ls);
         }
 
         public ActionResult Contact()

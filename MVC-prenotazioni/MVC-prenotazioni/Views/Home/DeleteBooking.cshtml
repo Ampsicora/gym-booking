@@ -1,0 +1,12 @@
+﻿@model List<MVC_prenotazioni.Models.booking>
+@{
+    ViewBag.Title = "About";
+}
+
+<div>
+    @foreach (var x in @Model)
+    {
+        <p>@x.id</p>
+    }
+</div>
+<p>Use this area to provide additional information.</p>
