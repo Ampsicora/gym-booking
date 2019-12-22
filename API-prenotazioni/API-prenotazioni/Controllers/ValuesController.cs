@@ -16,17 +16,18 @@ namespace API_prenotazioni.Controllers
             List<Booking> res;
             using (var db = new palestraEntities())
             {
-
-
                 res = db.Booking.ToList();
                 
-                var config = new MapperConfiguration(cfg => {
+                var config = new MapperConfiguration(cfg => 
+                {
                     cfg.CreateMap<Booking, booking>();
                 });
-                var mapper = new Mapper(config);
-                List<booking> cars = mapper.Map<List<Booking>, List<booking>>(res);
 
-                return cars;
+                var mapper = new Mapper(config);
+
+                List<booking> bookings = mapper.Map<List<Booking>, List<booking>>(res);
+
+                return bookings;
             }
         }
 
