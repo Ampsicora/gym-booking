@@ -15,6 +15,8 @@ namespace API_prenotazioni.Models
         public System.TimeSpan end_time { get; set; }
         public bool equipment { get; set; }
         public decimal price { get; set; }
+        public virtual room Room { get; set; }
+        public virtual user User { get; set; }
 
     }
 }

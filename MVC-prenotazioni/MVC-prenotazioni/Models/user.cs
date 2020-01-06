@@ -7,10 +7,8 @@ namespace MVC_prenotazioni.Models
 {
     public class user
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public user()
         {
-            this.Booking = new List<booking>();
         }
 
         public string email { get; set; }
@@ -20,7 +18,5 @@ namespace MVC_prenotazioni.Models
         public System.DateTime birthday { get; set; }
         public bool subscribed { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<booking> Booking { get; set; }
     }
 }

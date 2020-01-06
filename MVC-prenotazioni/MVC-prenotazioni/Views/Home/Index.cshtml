@@ -1,41 +1,56 @@
-﻿@model  List<MVC_prenotazioni.Models.booking>
-@{
+﻿@{
     ViewBag.Title = "Home Page";
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>Book a gym room</h1>
+    <p class="lead">Hi, please register a room for your training, thanks.</p>
 </div>
+<div class="container">
+    @if (ViewBag.Message != null)
+    {
+        <div class="row align-content-center">
+            <div strong class="col align-content-center text-center text-success text-uppercase"><p>@ViewBag.Message</p></div>
 
-<div class="row">
-    <div class="col-md-4">
-        @using (Html.BeginForm("Index", "Home", FormMethod.Post))
-        {
-            <input type="email" name="Insert e-mail" id="mail"/><label for="mail">Insert email</label>
-            if (@Model != null)
+        </div>
+    }
+    <div class="row justify-content-center">
+        <div class="col-lg-6 align-content-center">
+            @using (Html.BeginForm("PostIndex", "Home", FormMethod.Post))
             {
-                foreach (var x in @Model)
-                {
-                    <input type="radio" id="room"+ @x.date name="room" value="@Model" />
-                    <label for="room @Model">Room @Model - Description: @Model</label>
-                }
+                @Html.AntiForgeryToken()
+                
+                <p class="form-group">
+                    <select name="room">
+                        @if (ViewBag.Rooms != null)
+                        {
+                            foreach (var x in ViewBag.Rooms)
+                            {
+                                <option value="@x.id">Room @x.id @x.name - Description: @x.description</option>
+                            }
 
-            }
-            <input type="date" id="day" />
-            <label for="day">Giorno</label>
-            <input type="time" id="startime" name="Start" min="09:00" max="17:30" step="1800" />
-            <label for="starttime">Start time</label>
-            <input type="time" id="endtime" min="09:30" max="18:00" step="1800" />
-            <label for="starttime">End Time</label>
-            <input type="checkbox" id="equipment" />
-            <label for="equipment">Hai l'equipaggiamento?</label>
-            <input type="submit" />
+                        }
+                    </select>
+                </p>
+                <p class="form-group">
+                    <label for="day">Giorno</label>
+                    <input type="date" name="day" required/>
+                </p>
+                <p class="form-group">
+                    <label for="starttime">Start time</label>
+                    <input type="time" id="startime" name="start" min="09:00" max="17:30" step="1800" required/>
+                </p>
+                <p class="form-group">
+                    <label for="starttime">End Time</label>
+                    <input type="time" name="endtime" min="09:30" max="18:00" step="1800" required/>
+                </p>
+                <p class="form-group">
+                    <label for="equipment">Hai l'equipaggiamento?</label>
+                    <input type="checkbox" name="equipment"/>
+                </p>
+                <p><input type="submit" /></p>
 
-        }
-
-    </div>
-    <div class="col-md-4">
+            }   
+        </div>
     </div>
 </div>

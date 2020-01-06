@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Login Page";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Login", "Authentication", FormMethod.Post))
+
+{
+    <input type="email" name="mail" placeholder="Your E-mail" />
+    <input type="password" name="pwd" placeholder="Your password" />
+    <input type="submit" />
+}
+
+@if (ViewBag.Msg != null)
+{
+    <p>@ViewBag.Msg</p>
+}
+

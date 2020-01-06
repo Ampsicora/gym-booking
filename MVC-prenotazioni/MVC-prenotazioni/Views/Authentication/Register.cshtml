@@ -1,0 +1,28 @@
+﻿@model MVC_prenotazioni.Models.user
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>Register</h2>
+
+@using (Html.BeginForm("Register", "Authentication", FormMethod.Post))
+{
+    <p><input type="email" name="email" placeholder="E-Mail" required /></p>
+    <p><input type="password" name="password" placeholder="Password..." required /></p>
+    <p><input type="text" name="name" placeholder="Name" required /></p>
+    <p><input type="text" name="surname" placeholder="Surname" required /></p>
+    <p>
+        <label for="birthday">Date of Birth</label>
+        <input type="date" name="birthday" placeholder="Date of Birth" required />
+    </p>
+    <p>
+        <label for="subscribed">Are you subscribed?</label>
+        <input type="checkbox" name="subscribed" placeholder="Are you subscribed?" />
+    </p>
+    <p><input type="submit" name="submit" value="Send" /></p>
+}
+
+@if (ViewBag.Msg != null)
+{
+    <p>@ViewBag.Msg</p>
+}
