@@ -17,7 +17,7 @@ namespace API_prenotazioni.Controllers
             List<Booking> res;
             using (var db = new palestraEntities())
             {
-                res = db.Booking.ToList();
+                res = db.Booking.OrderBy(p => p.date).ToList();
                 
                 var config = new MapperConfiguration(cfg => 
                 {

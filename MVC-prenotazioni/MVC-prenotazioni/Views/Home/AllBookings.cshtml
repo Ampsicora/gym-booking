@@ -45,6 +45,13 @@
                         <td>@x.equipment</td>
                     }
                 </tr>
+                <tr>
+                    <th>Price to Be Paid</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td>@(x.price)</td>
+                    }
+                </tr>
             </table>
 
 
