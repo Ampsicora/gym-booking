@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Applicazione ASP.NET</title>
@@ -19,13 +19,30 @@
                 </button>
                 @Html.ActionLink("Nome dell'applicazione", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Informazioni", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contatto", "Contact", "Home")</li>
-                </ul>
-            </div>
+            @if (HttpContext.Current.User.Identity.Name != "")
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Delete", "DeleteBooking", "Home")</li>
+                        <li>@Html.ActionLink("Update", "UpdateBooking", "Home")</li>
+                        <li>@Html.ActionLink("Show All Existent", "AllBookings", "Home")</li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">@Html.ActionLink("Log Out", "LogOut", "Authentication")</li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">@Html.ActionLink("Login", "Login", "Authentication")</li>
+                        <li class="">@Html.ActionLink("Register", "Register", "Authentication")</li>
+                    </ul>
+                </div>
+            }
         </div>
     </div>
     <div class="container body-content">

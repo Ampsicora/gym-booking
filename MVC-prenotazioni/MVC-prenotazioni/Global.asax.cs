@@ -17,5 +17,10 @@ namespace MVC_prenotazioni
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+        protected void Session_Start()
+        {
+            Session["Session_Start"] = $"Session_Start {DateTime.Now}";
+        }
+
     }
 }

@@ -3,29 +3,56 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>Book a gym room</h1>
+    <p class="lead">Hi, please choose a room, a date, a time interval for your training, thanks.</p>
+    <p>Prices are: 7€ per 1/2hr, if you're not subscribed to our gym + 3€ if you haven't got equipment. After the submission, you'll get a confirmation
+    of your booking and the price you owe to pay.   </p>
 </div>
+<div class="container">
+    @if (ViewBag.Message != null)
+    {
+        <div class="row align-content-center">
+            <div strong class="col align-content-center text-center text-success text-uppercase"><p>@ViewBag.Message</p></div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    }
+    <div class="row justify-content-center">
+        <div class="col-lg-6 align-content-center">
+            @using (Html.BeginForm("PostIndex", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                
+                <p class="form-group">
+                    <select name="room">
+                        @if (ViewBag.Rooms != null)
+                        {
+                            foreach (var x in ViewBag.Rooms)
+                            {
+                                <option value="@x.id">Room @x.id @x.name - Description: @x.description</option>
+                            }
+
+                        }
+                    </select>
+                </p>
+                <p class="form-group">
+                    <label for="day">Giorno</label>
+                    <input type="date" name="day" required/>
+                </p>
+                <p class="form-group">
+                    <label for="starttime">Start time</label>
+                    <input type="time" id="startime" name="start" min="09:00" max="17:30" step="1800" required/>
+                </p>
+                <p class="form-group">
+                    <label for="starttime">End Time</label>
+                    <input type="time" name="endtime" min="09:30" max="18:00" step="1800" required/>
+                </p>
+                <p class="form-group">
+                    <label for="equipment">Hai l'equipaggiamento?</label>
+                    <input type="checkbox" name="equipment"/>
+                </p>
+                <p><input type="submit" /></p>
+
+            }   
+        </div>
     </div>
 </div>

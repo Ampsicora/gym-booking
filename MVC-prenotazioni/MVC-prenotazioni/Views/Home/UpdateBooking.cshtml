@@ -1,0 +1,52 @@
+﻿@model List<MVC_prenotazioni.Models.booking>
+@{
+    ViewBag.Title = "Update Bookings";
+}
+<h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
+
+<div class="container ">
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table" title="Bookings">
+                <tr>
+                    <th>Id</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td><a href="/Home/Delete/@x.id" method="delete">@x.id</a></td>
+                    }
+                </tr>
+                <tr>
+                    <th>Room</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td>@x.Room.name</td>
+                    }
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td>@x.date</td>
+                    }
+                </tr>
+                <tr>
+                    <th>Time</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td>@x.begin_time.ToString() - @x.end_time</td>
+                    }
+                </tr>
+                <tr>
+                    <th>Equipment</th>
+                    @foreach (var x in @Model)
+                    {
+                        <td>@x.equipment</td>
+                    }
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+</div>
