@@ -33,8 +33,16 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
-
-
+        [Route("api/values/{mail}")]
+        [HttpGet]
+        public string IsUserSubscribed(string mail)
+        {
+            using (var db = new palestraEntities())
+            {
+                var res = db.User.Where(p => p.email.Equals(mail)).FirstOrDefault();
+                return res!=null ? res.subscribed.ToString() : "0";
+            }
+        }
 
         // GET api/values/bookingsperuser/mail => get all bookings per user
         [Route("api/values/bookingsperuser/{mail}")]
@@ -84,9 +92,33 @@ namespace API_prenotazioni.Controllers
 
         // POST api/values
         [Route("api/values/newbooking")]
-        public void Post([FromBody]booking b)
+        public HttpResponseMessage Post([FromBody]booking b)
         {
-            var bs = b;
+            using (var db = new palestraEntities())
+            {
+                var res = db.Booking.Where(p => 
+                                           p.id_room == b.id_room
+                                           && p.date.Equals(b.date)
+                                           && p.begin_time < b.end_time
+                                           && p.end_time > b.begin_time)
+                                           .FirstOrDefault();
+                if (res!= null)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                }
+                db.Booking.Add(new Booking()
+                {
+                    id_room = b.id_room,
+                    email_user = b.email_user,
+                    date = b.date,
+                    begin_time = b.begin_time,
+                    end_time = b.end_time,
+                    equipment = b.equipment,
+                    price = b.price
+                });
+                db.SaveChanges();
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
 
         }
         [Route("api/values/updatebooking")]
@@ -98,8 +130,20 @@ namespace API_prenotazioni.Controllers
 
         // DELETE api/values/5
         [Route("api/values/{mail}/{id}")]
-        public void Delete(int id)
+        public int Delete(string mail, int id)
         {
+            using (var db = new palestraEntities())
+            {
+                var res = db.Booking.Where(p => p.email_user.Equals(mail) && p.id == id).FirstOrDefault();
+
+                if (res == null)
+                    return 0;
+
+                else
+                    db.Booking.Remove(res);
+
+                return db.SaveChanges();
+            }
         }
     }
 }

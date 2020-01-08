@@ -60,7 +60,20 @@ namespace MVC_prenotazioni.Controllers
                     end_time = TimeSpan.Parse(test.Get("endtime")),
                     equipment = test.Get("equipment") != null ? true : false,
                 };
-                b.price = (decimal)((Session["subscribe"].ToString() == "0" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
+                var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
+                req.Wait();
+                string sub = "";
+                if (req.Result.IsSuccessStatusCode)
+                {
+                    var subscribed = req.Result.Content.ReadAsStringAsync();
+                    subscribed.Wait();
+                    sub = subscribed.Result;
+                    if (sub == "0") return RedirectToAction("Index");
+                } else
+                {
+                    return RedirectToAction("Index");
+                }
+                b.price = (decimal)((sub == "\"False\"" ?  (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
                 StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
                 var req2 = conn.PostAsync(@"https://localhost:44360/api/values/newbooking", content);
                 req2.Wait();
@@ -76,7 +89,7 @@ namespace MVC_prenotazioni.Controllers
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
-                var req = conn.GetAsync(@"https://localhost:44360/api/values/");//bookingsperuser/" + Response.Cookies.Get("user").Value);
+                var req = conn.GetAsync(@"https://localhost:44360/api/values/bookingsperuser/" + HttpContext.User.Identity.Name);
                 req.Wait();
                 var res = req.Result;
                 if (res.IsSuccessStatusCode)
@@ -96,7 +109,9 @@ namespace MVC_prenotazioni.Controllers
                 var req = conn.DeleteAsync(@"https://localhost:44360/api/values/" + HttpContext.User.Identity.Name + "/" + id);
                 req.Wait();
                 var res = req.Result;
-                ViewBag.Message = res.IsSuccessStatusCode ? "Delete Successfull" : "Delete wasn't performed.";
+                var t = res.Content.ReadAsStringAsync();
+                t.Wait();
+                ViewBag.Message = t.Result.Equals("1") ? "Delete Successfull" : "Delete wasn't performed.";
             }
             return RedirectToAction("DeleteBooking");
         }

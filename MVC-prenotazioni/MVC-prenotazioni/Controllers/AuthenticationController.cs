@@ -32,21 +32,6 @@ namespace MVC_prenotazioni.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            //if (mail == "prova@prova.it" && pwd == "ciao")
-            //{
-            //    FormsAuthentication.SetAuthCookie(mail, true);
-
-            //    Session["subscribe"] = 1;
-            //    //HttpCookie id = new HttpCookie("user", "1");
-            //    //HttpCookie subscribed = new HttpCookie("subscribe", "1");
-            //    //id.HttpOnly = true;
-            //    //subscribed.HttpOnly = true;
-            //    //id.Expires = DateTime.Now.AddDays(1);
-            //    //subscribed.Expires = DateTime.Now.AddDays(1);
-            //    //Response.AppendCookie(id);
-            //    //Response.AppendCookie(subscribed);
-            //    return RedirectToAction("Index", "Home");
-            //}
             using (var conn = new HttpClient())
             {
                 var req = conn.GetAsync(@"https://localhost:44360/api/user/" + mail + "/" + pwd);
@@ -56,9 +41,7 @@ namespace MVC_prenotazioni.Controllers
                 {
                     var data = res.Content.ReadAsStringAsync();
                     data.Wait();
-                    FormsAuthentication.SetAuthCookie(mail, true);
-                    Session["subscribe"] = data.Result;
-
+                    FormsAuthentication.SetAuthCookie(mail, false);
                     return RedirectToAction("Index", "Home");
                 }
             }

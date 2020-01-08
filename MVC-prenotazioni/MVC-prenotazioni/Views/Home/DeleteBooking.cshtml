@@ -8,50 +8,70 @@
     <div class="row">
         <div class="col-lg-12">
             <table class="table" title="Bookings">
-                <tr>
-                    <th>Room</th>
-                    @foreach (var x in @Model)
+                @{
+                    int limit = 4;
+                    for (int y = 0; y <= Model.Count / limit; y++)
                     {
-                        <td>@x.Room.name</td>
-                        @Html.Hidden(@x.id.ToString())
-                    }
-                </tr>
-                <tr>
-                    <th>Date</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.date</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Time</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.begin_time.ToString() - @x.end_time</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Equipment</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.equipment</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Price</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.price</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Delete</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td><a href="/Home/Delete/@x.id"><button name="go">Go</button></a></td>
-                    }
-                </tr>
+                        int to = y == Model.Count / limit ? limit * y + Model.Count % limit : 4 + (limit * y);
 
+
+                        <tr>
+                            <th>Room</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+                                <td>@Model[z].Room.name</td>
+                                @Html.Hidden(@Model[z].id.ToString())
+                            }
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            @for (int z = y * 4; z < to; z++)
+
+
+                            {
+
+                                <td>@Model[z].date</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Time</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@Model[z].begin_time.ToString() - @Model[z].end_time</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Equipment</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@Model[z].equipment</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Price to Be Paid</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@String.Format("{0:C}", Model[z].price)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Delete</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+                                <td><a href="/Home/Delete/@Model[z].id "><button name="go">Go</button></a></td>
+                            }
+                        </tr>
+
+                    }
+                }
             </table>
 
 
