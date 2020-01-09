@@ -10,51 +10,70 @@
     <div class="row">
         <div class="col-lg-12">
             <table class="table" title="Bookings">
-                <tr>
-                    <th>Mail</th>
-                    @foreach (var x in @Model)
+                @{
+                    int limit = 4;
+                    int rest = Model.Count % limit;
+                    int rows = Model.Count / limit;
+                    for (int y = 0; y <= rows; y++)
                     {
-                        <td>@x.email_user</td>
+                        int to = y == (rows) &&  rest == 0 ? 0 : y == (rows) ? (limit * y) + rest  : 4 + (limit * y);
+                        if (to == 0) { return; };
+                        <tr>
+                            <th>Mail</th>
+                            @for (int z = y * 4; z < to; z++)
+                            {
+                                <td>@Model[z].email_user</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Room</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+                                <td>@Model[z].Room.name</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            @for (int z = y * 4; z < to; z++)
+
+
+                            {
+
+                                <td>@Model[z].date</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Time</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@Model[z].begin_time.ToString() - @Model[z].end_time</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Equipment</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@Model[z].equipment</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Price to Be Paid</th>
+                            @for (int z = y * 4; z < to; z++)
+
+                            {
+
+                                <td>@String.Format("{0:C}", Model[z].price)</td>
+                            }
+                        </tr>
+
                     }
-                </tr>
-                <tr>
-                    <th>Room</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.Room.name</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Date</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.date</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Time</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.begin_time.ToString() - @x.end_time</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Equipment</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@x.equipment</td>
-                    }
-                </tr>
-                <tr>
-                    <th>Price to Be Paid</th>
-                    @foreach (var x in @Model)
-                    {
-                        <td>@(x.price)</td>
-                    }
-                </tr>
+                }
             </table>
-
-
         </div>
     </div>
 </div>
