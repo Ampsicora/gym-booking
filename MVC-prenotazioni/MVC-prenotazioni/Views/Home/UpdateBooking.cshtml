@@ -26,7 +26,7 @@
                                 foreach (var x in ViewBag.Rooms)
                                 {
                                     string sel = x.id == mod.id_room ? "selected" : "";
-                                    <option @sel value="@x.id">Room @x.id @x.name - Description: @x.description</option>
+                                    <option @sel value="@x.id">@x.id) @x.name - @x.description</option>
                                 }
                             }
                         </select>
@@ -55,7 +55,6 @@
                     <div class="col-md-9 text-center">
                         @{string check = mod.equipment ? "checked" : "";}
                         <input type="checkbox" @check name="equipment" />
-                        @*<input type="hidden" value="false" name="equipment" />*@
                     </div>
                 </div>
                 <div class="form-group">
@@ -70,10 +69,6 @@
                     </div>
                 </div>
             </div>
-
         }
-
     }
 </div>
-<hr />
-<hr />

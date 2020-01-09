@@ -9,8 +9,14 @@ using System.Web.Http;
 
 namespace API_prenotazioni.Controllers
 {
+    /// <summary>
+    /// Crud Operations Controller.
+    /// </summary>
     public class ValuesController : ApiController
     {
+        /// <summary>
+        /// Gets all the bookings saved in the database.
+        /// </summary>
         [Route("api/values")]
         public List<booking> Get()
         {
@@ -33,6 +39,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
+        /// <summary>
+        /// Get if a registered user is already subscribed to the gym (a.k.a booking time price = 0).
+        /// </summary>
         [Route("api/values/{mail}")]
         [HttpGet]
         public string IsUserSubscribed(string mail)
@@ -43,7 +52,9 @@ namespace API_prenotazioni.Controllers
                 return res != null ? res.subscribed.ToString() : "0";
             }
         }
-
+        /// <summary>
+        /// Gets all the bookings per user, searched by user mail.
+        /// </summary>
         [Route("api/values/bookingsperuser/{mail}")]
         [HttpGet]
         public List<booking> Get(string mail)
@@ -69,7 +80,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
-
+        /// <summary>
+        /// Gets all the rooms of the gym.
+        /// </summary>
         [Route("api/values/getrooms")]
         public List<room> GetRooms()
         {
@@ -90,7 +103,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
-
+        /// <summary>
+        /// Post, if possible, a new booking.
+        /// </summary>
         [Route("api/values/newbooking")]
         public HttpResponseMessage Post([FromBody]booking b)
         {
@@ -121,8 +136,10 @@ namespace API_prenotazioni.Controllers
             }
 
         }
+        /// <summary>
+        /// Update, if possible, a booking.
+        /// </summary>
         [Route("api/values/updatebooking")]
-
         public HttpResponseMessage Put([FromBody]booking b)
         {
             using (var db = new palestraEntities())
@@ -152,7 +169,9 @@ namespace API_prenotazioni.Controllers
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
         }
-
+        /// <summary>
+        /// Delete, if possible, a booking.
+        /// </summary>
         [Route("api/values/{mail}/{id}")]
         public int Delete(string mail, int id)
         {

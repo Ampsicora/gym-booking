@@ -7,7 +7,6 @@
 {
     <h3>@ViewBag.Msg</h3>
 }
-</hr>
 <div class="container">
     <div class="row align-content-center">
         <div class="col-lg-12">
@@ -26,7 +25,7 @@
                             @for (int z = y * 4; z < to; z++)
 
                             {
-                                <td>@Model[z].Room.name</td>
+                                <td>@Model[z].Room.id) @Model[z].Room.name</td>
                                 @Html.Hidden(@Model[z].id.ToString())
                             }
                         </tr>
@@ -37,7 +36,7 @@
 
                             {
 
-                                <td>@Model[z].date.ToString("yyyy-MM-dd")</td>
+                                <td>@Model[z].date.ToString("dd-MM-yyyy")</td>
                             }
                         </tr>
                         <tr>
@@ -75,12 +74,9 @@
                                 <td><a href="/Home/Delete/@Model[z].id "><button name="go">Go</button></a></td>
                             }
                         </tr>
-
                     }
                 }
             </table>
-
-
         </div>
     </div>
 </div>

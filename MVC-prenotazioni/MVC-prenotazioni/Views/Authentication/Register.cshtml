@@ -2,9 +2,11 @@
 @{
     ViewBag.Title = "Register";
 }
-
 <h2>Register</h2>
-
+@if (ViewBag.Msg != null)
+{
+    <h3>@ViewBag.Msg</h3>
+}
 @using (Html.BeginForm("Register", "Authentication", FormMethod.Post))
 {
     <p><input type="email" name="email" placeholder="E-Mail" required /></p>
@@ -19,12 +21,6 @@
         <label for="subscribed">Are you subscribed?</label>
         <input type="checkbox" name="subscribed" value="true" placeholder="Are you subscribed?" />
         <input type="hidden" value="false" name="subscribed" />
-
     </p>
     <p><input type="submit" name="submit" value="Send" /></p>
-}
-
-@if (ViewBag.Msg != null)
-{
-    <p>@ViewBag.Msg</p>
 }

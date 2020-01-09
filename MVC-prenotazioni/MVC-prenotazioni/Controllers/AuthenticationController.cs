@@ -1,11 +1,9 @@
 ﻿using MVC_prenotazioni.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -14,7 +12,6 @@ namespace MVC_prenotazioni.Controllers
 {
     public class AuthenticationController : Controller
     {
-
         public ActionResult Login()
         {
             if (HttpContext.User.Identity.Name != "")
@@ -24,7 +21,6 @@ namespace MVC_prenotazioni.Controllers
             ViewBag.Msg = TempData["msg"];
             return View();
         }
-
         [System.Web.Mvc.HttpPost]
         public ActionResult Login([FromBody] string mail, string pwd)
         {
@@ -48,19 +44,18 @@ namespace MVC_prenotazioni.Controllers
             ViewBag.Msg = "Login Failed.";
             return View();
         }
-
         public ActionResult Register()
         {
             return View();
         }
-
         [System.Web.Mvc.HttpPost]
         public ActionResult Register(user u)
         {
+            
             if (u.GetType().GetProperties().Select(p => p.GetValue(u))
-               .Any(y => y == null ) || u.birthday < DateTime.Now)
+               .Any(y => y == null ) || u.birthday > DateTime.Now)
             {
-                ViewBag.Msg = "Registration Failed, you had wrong data.";
+                ViewBag.Msg = "Registration Failed, you sent invalid data.";
                 return View();
             }
             using (var conn = new HttpClient())
@@ -81,7 +76,7 @@ namespace MVC_prenotazioni.Controllers
         public ActionResult LogOut()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login", "Authentication");
+            return RedirectToAction("Login");
         }
     }
 }

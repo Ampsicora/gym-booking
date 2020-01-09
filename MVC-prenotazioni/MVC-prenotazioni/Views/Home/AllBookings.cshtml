@@ -3,9 +3,8 @@
 @{
     ViewBag.Title = "All Bookings";
 }
-
 <h2>All Bookings</h2>
-</hr>
+<hr />
 <div class="container ">
     <div class="row">
         <div class="col-lg-12">
@@ -28,34 +27,28 @@
                         <tr>
                             <th>Room</th>
                             @for (int z = y * 4; z < to; z++)
-
                             {
-                                <td>@Model[z].Room.name</td>
+                                <td>@Model[z].Room.id) @Model[z].Room.name</td>
                             }
                         </tr>
                         <tr>
                             <th>Date</th>
                             @for (int z = y * 4; z < to; z++)
-
-
                             {
 
-                                <td>@Model[z].date.ToString("yyyy-MM-dd")</td>
+                                <td>@Model[z].date.ToString("dd-MM-yyyy")</td>
                             }
                         </tr>
                         <tr>
                             <th>Time</th>
                             @for (int z = y * 4; z < to; z++)
-
                             {
-
                                 <td>@Model[z].begin_time.ToString() - @Model[z].end_time</td>
                             }
                         </tr>
                         <tr>
                             <th>Equipment</th>
                             @for (int z = y * 4; z < to; z++)
-
                             {
 
                                 <td>@Model[z].equipment</td>
@@ -64,17 +57,14 @@
                         <tr>
                             <th>Price to Be Paid</th>
                             @for (int z = y * 4; z < to; z++)
-
                             {
 
                                 <td>@String.Format("{0:C}", Model[z].price)</td>
                             }
                         </tr>
-
                     }
                 }
             </table>
         </div>
     </div>
 </div>
-

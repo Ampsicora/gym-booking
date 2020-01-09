@@ -298,3 +298,4 @@ C:\Users\matte\Documents\Personale\Personal MG\ITS\C#\Palestre\API-prenotazioni\
 C:\Users\matte\Documents\Personale\Personal MG\ITS\C#\Palestre\API-prenotazioni\API-prenotazioni\obj\Debug\API-prenotazioni.csproj.CopyComplete
 C:\Users\matte\Documents\Personale\Personal MG\ITS\C#\Palestre\API-prenotazioni\API-prenotazioni\obj\Debug\API-prenotazioni.dll
 C:\Users\matte\Documents\Personale\Personal MG\ITS\C#\Palestre\API-prenotazioni\API-prenotazioni\obj\Debug\API-prenotazioni.pdb
+C:\Users\matte\Documents\Personale\Personal MG\ITS\C#\Palestre\API-prenotazioni\API-prenotazioni\bin\XmlDocument.xml
