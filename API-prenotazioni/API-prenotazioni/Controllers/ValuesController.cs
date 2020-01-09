@@ -18,8 +18,8 @@ namespace API_prenotazioni.Controllers
             using (var db = new palestraEntities())
             {
                 res = db.Booking.OrderBy(p => p.date).ToList();
-                
-                var config = new MapperConfiguration(cfg => 
+
+                var config = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<Booking, booking>();
                     cfg.CreateMap<Room, room>();
@@ -40,7 +40,7 @@ namespace API_prenotazioni.Controllers
             using (var db = new palestraEntities())
             {
                 var res = db.User.Where(p => p.email.Equals(mail)).FirstOrDefault();
-                return res!=null ? res.subscribed.ToString() : "0";
+                return res != null ? res.subscribed.ToString() : "0";
             }
         }
 
@@ -96,13 +96,13 @@ namespace API_prenotazioni.Controllers
         {
             using (var db = new palestraEntities())
             {
-                var res = db.Booking.Where(p => 
+                var res = db.Booking.Where(p =>
                                            p.id_room == b.id_room
                                            && p.date.Equals(b.date)
                                            && p.begin_time < b.end_time
                                            && p.end_time > b.begin_time)
                                            .FirstOrDefault();
-                if (res!= null)
+                if (res != null)
                 {
                     return new HttpResponseMessage(HttpStatusCode.BadRequest);
                 }
@@ -124,8 +124,33 @@ namespace API_prenotazioni.Controllers
         [Route("api/values/updatebooking")]
 
         // PUT api/values/5
-        public void Put([FromBody]booking b)
+        public HttpResponseMessage Put([FromBody]booking b)
         {
+            using (var db = new palestraEntities())
+            {
+                var res2 = db.Booking.Where(p => p.email_user.Equals(b.email_user) && p.id == b.id).FirstOrDefault();
+                if (res2 == null) return new HttpResponseMessage(HttpStatusCode.NotFound);
+                var res = db.Booking.Where(p =>
+                                           p.id_room == b.id_room
+                                           && p.date.Equals(b.date)
+                                           && p.begin_time < b.end_time
+                                           && p.end_time > b.begin_time)
+                                           .FirstOrDefault();
+                if (res != null)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                }
+
+
+                res2.id_room = b.id_room;
+                res2.date = b.date;
+                res2.begin_time = b.begin_time;
+                res2.end_time = b.end_time;
+                res2.equipment = b.equipment;
+                res2.price = b.price;
+                db.SaveChanges();
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
         }
 
         // DELETE api/values/5

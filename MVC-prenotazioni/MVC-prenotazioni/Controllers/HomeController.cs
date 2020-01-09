@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -37,28 +38,24 @@ namespace MVC_prenotazioni.Controllers
         public ActionResult PostIndex()
         {
             var test = HttpContext.Request.Form;
-            if (test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null)
+            TimeSpan interval;
+            if (ValidationData(test).Equals(new TimeSpan()))
             {
-                TempData["msg"] = "Error posting your booking, please check your data.";
                 return RedirectToAction("Index");
-            }
-            TimeSpan interval = TimeSpan.Parse(test.Get("endtime")) - TimeSpan.Parse(test.Get("start"));
-            if (interval.TotalMinutes <= 0)
+            } else
             {
-                TempData["msg"] = "Error posting your booking, please check your data.";
-                return RedirectToAction("Index");
+                interval = ValidationData(test);
             }
             using (var conn = new HttpClient())
             {
                 booking b = new booking()
                 {
-                    //id = null,
                     id_room = int.Parse(test.Get("room")),
                     email_user = HttpContext.User.Identity.Name,
                     date = DateTime.Parse(test.Get("day")),
                     begin_time = TimeSpan.Parse(test.Get("start")),
                     end_time = TimeSpan.Parse(test.Get("endtime")),
-                    equipment = test.Get("equipment") != null ? true : false,
+                    equipment = bool.Parse(test.Get("equipment")),
                 };
                 var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
                 req.Wait();
@@ -121,7 +118,16 @@ namespace MVC_prenotazioni.Controllers
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
-                var req = conn.GetAsync(@"https://localhost:44360/api/values/bookingsperuser/" + Response.Cookies.Get("user").Value);
+                var req2 = conn.GetAsync("https://localhost:44360/api/values/getrooms");
+                req2.Wait();
+                var res2 = req2.Result;
+                if (res2.IsSuccessStatusCode)
+                {
+                    var data = res2.Content.ReadAsStringAsync();
+                    data.Wait();
+                    ViewBag.Rooms = JsonConvert.DeserializeObject<List<room>>(data.Result);
+                }
+                var req = conn.GetAsync(@"https://localhost:44360/api/values/bookingsperuser/" + HttpContext.User.Identity.Name);
                 req.Wait();
                 var res = req.Result;
                 if (res.IsSuccessStatusCode)
@@ -133,9 +139,53 @@ namespace MVC_prenotazioni.Controllers
             }
             return View(ls);
         }
-        public ActionResult Update(booking b)
+        public ActionResult Update()
         {
-            return UpdateBooking();
+            var test = HttpContext.Request.Form;
+            TimeSpan interval;
+            if (ValidationData(test).Equals(new TimeSpan()))
+            {
+                return RedirectToAction("UpdateBooking");
+            }
+            else
+            {
+                interval = ValidationData(test);
+            }
+            using (var conn = new HttpClient())
+            {
+                booking b = new booking()
+                {
+                    id = int.Parse(test.Get("id")),
+                    id_room = int.Parse(test.Get("room")),
+                    email_user = HttpContext.User.Identity.Name,
+                    date = DateTime.Parse(test.Get("day")),
+                    begin_time = TimeSpan.Parse(test.Get("start")),
+                    end_time = TimeSpan.Parse(test.Get("endtime")),
+                    equipment = bool.Parse(test.Get("equipment")),
+                };
+                var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
+                req.Wait();
+                string sub = "";
+                if (req.Result.IsSuccessStatusCode)
+                {
+                    var subscribed = req.Result.Content.ReadAsStringAsync();
+                    subscribed.Wait();
+                    sub = subscribed.Result;
+                    if (sub == "0") return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
+                b.price = (decimal)((sub == "\"False\"" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
+                StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
+                var req2 = conn.PutAsync(@"https://localhost:44360/api/values/updatebooking", content);
+                req2.Wait();
+                TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + b.price
+                                                                    : "I'm sorry, your booking wasn't confirmed.";
+            }
+
+            return RedirectToAction("Index");
 
         }
         public ActionResult AllBookings()
@@ -154,6 +204,22 @@ namespace MVC_prenotazioni.Controllers
                 }
             }
             return View(ls);
+        }
+        protected TimeSpan ValidationData(NameValueCollection test)
+        {
+            if (test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null
+                || DateTime.Parse(test.Get("day")) < DateTime.Now)
+            {
+                TempData["msg"] = "Error posting your booking, please check your data.";
+                return new TimeSpan();
+            }
+            TimeSpan interval = TimeSpan.Parse(test.Get("endtime")) - TimeSpan.Parse(test.Get("start"));
+            if (interval.TotalMinutes <= 0)
+            {
+                TempData["msg"] = "Error posting your booking, please check your data.";
+                return new TimeSpan();
+            }
+            return interval;
         }
     }
 }

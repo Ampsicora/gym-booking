@@ -4,16 +4,18 @@
 }
 <h2>@ViewBag.Title</h2>
 
-<div class="container ">
-    <div class="row">
+<div class="container">
+    <div class="row align-content-center">
         <div class="col-lg-12">
             <table class="table" title="Bookings">
                 @{
                     int limit = 4;
-                    for (int y = 0; y <= Model.Count / limit; y++)
+                    int rest = Model.Count % limit;
+                    int rows = Model.Count / limit;
+                    for (int y = 0; y <= rows; y++)
                     {
-                        int to = y == Model.Count / limit ? limit * y + Model.Count % limit : 4 + (limit * y);
-
+                        int to = y == (rows) &&  rest == 0 ? 0 : y == (rows) ? (limit * y) + rest  : 4 + (limit * y);
+                        if (to == 0) { return; };
 
                         <tr>
                             <th>Room</th>
