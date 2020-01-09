@@ -58,9 +58,9 @@ namespace MVC_prenotazioni.Controllers
         public ActionResult Register(user u)
         {
             if (u.GetType().GetProperties().Select(p => p.GetValue(u))
-               .Any(y => y == null ))
+               .Any(y => y == null ) || u.birthday < DateTime.Now)
             {
-                ViewBag.Msg = "Registration Failed, you had null data.";
+                ViewBag.Msg = "Registration Failed, you had wrong data.";
                 return View();
             }
             using (var conn = new HttpClient())

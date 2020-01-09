@@ -23,9 +23,13 @@ namespace API_prenotazioni.Controllers
         [System.Web.Http.Route("api/user/{mail}/{password}")]
         public HttpResponseMessage Login(string mail, string password)
         {
+            byte[] data = Encoding.ASCII.GetBytes(password);
+            data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
+            string hash = Encoding.ASCII.GetString(data);
+
             using (var db = new palestraEntities())
             {
-                User res = db.User.Where(x => x.email.Equals(mail) && x.password.Equals(password)).FirstOrDefault();
+                User res = db.User.Where(x => x.email.Equals(mail) && x.password.Equals(hash)).FirstOrDefault();
                 if (res != null)
                 {
                     var x = new HttpResponseMessage();
@@ -48,12 +52,15 @@ namespace API_prenotazioni.Controllers
                 User res = db.User.Where(x => x.email.Equals(u.email)).FirstOrDefault();
                 if (res == null)
                 {
+                    byte[] data = Encoding.ASCII.GetBytes(u.password);
+                    data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
+                    string hash = Encoding.ASCII.GetString(data);
                     db.User.Add(new User()
                     {
                         email = u.email,
                         name = u.name,
                         surname = u.surname,
-                        password = u.password,
+                        password = hash,
                         birthday = u.birthday,
                         subscribed = u.subscribed
                     });

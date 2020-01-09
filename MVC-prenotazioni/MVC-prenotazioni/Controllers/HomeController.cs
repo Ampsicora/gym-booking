@@ -55,7 +55,7 @@ namespace MVC_prenotazioni.Controllers
                     date = DateTime.Parse(test.Get("day")),
                     begin_time = TimeSpan.Parse(test.Get("start")),
                     end_time = TimeSpan.Parse(test.Get("endtime")),
-                    equipment = bool.Parse(test.Get("equipment")),
+                    equipment = test.Get("equipment") == "on"? true : false,
                 };
                 var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
                 req.Wait();
@@ -83,6 +83,7 @@ namespace MVC_prenotazioni.Controllers
 
         public ActionResult DeleteBooking()
         {
+            ViewBag.Msg = TempData["msg"];
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
@@ -108,13 +109,14 @@ namespace MVC_prenotazioni.Controllers
                 var res = req.Result;
                 var t = res.Content.ReadAsStringAsync();
                 t.Wait();
-                ViewBag.Message = t.Result.Equals("1") ? "Delete Successfull" : "Delete wasn't performed.";
+                TempData["msg"] = t.Result.Equals("1") ? "Delete Successfull" : "Delete wasn't performed.";
             }
             return RedirectToAction("DeleteBooking");
         }
 
         public ActionResult UpdateBooking()
         {
+            ViewBag.Msg = TempData["msg"];
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
@@ -145,6 +147,7 @@ namespace MVC_prenotazioni.Controllers
             TimeSpan interval;
             if (ValidationData(test).Equals(new TimeSpan()))
             {
+                TempData["msg"] = "You tried.";
                 return RedirectToAction("UpdateBooking");
             }
             else
@@ -161,7 +164,7 @@ namespace MVC_prenotazioni.Controllers
                     date = DateTime.Parse(test.Get("day")),
                     begin_time = TimeSpan.Parse(test.Get("start")),
                     end_time = TimeSpan.Parse(test.Get("endtime")),
-                    equipment = bool.Parse(test.Get("equipment")),
+                    equipment = test.Get("equipment") == "on" ? true : false
                 };
                 var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
                 req.Wait();
@@ -175,17 +178,17 @@ namespace MVC_prenotazioni.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("UpdateBooking");
                 }
                 b.price = (decimal)((sub == "\"False\"" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
                 StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
                 var req2 = conn.PutAsync(@"https://localhost:44360/api/values/updatebooking", content);
                 req2.Wait();
-                TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + b.price
+                TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + String.Format("{0:C}", b.price)
                                                                     : "I'm sorry, your booking wasn't confirmed.";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("UpdateBooking");
 
         }
         public ActionResult AllBookings()
@@ -207,8 +210,10 @@ namespace MVC_prenotazioni.Controllers
         }
         protected TimeSpan ValidationData(NameValueCollection test)
         {
-            if (test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null
-                || DateTime.Parse(test.Get("day")) < DateTime.Now)
+            if (test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null ||
+                (DateTime.Parse(test.Get("day")) < DateTime.Now
+                 && TimeSpan.Parse(test.Get("start")) < DateTime.Now.TimeOfDay)
+               )
             {
                 TempData["msg"] = "Error posting your booking, please check your data.";
                 return new TimeSpan();

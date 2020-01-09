@@ -5,7 +5,7 @@
 }
 
 <h2>All Bookings</h2>
-
+</hr>
 <div class="container ">
     <div class="row">
         <div class="col-lg-12">
@@ -16,7 +16,7 @@
                     int rows = Model.Count / limit;
                     for (int y = 0; y <= rows; y++)
                     {
-                        int to = y == (rows) &&  rest == 0 ? 0 : y == (rows) ? (limit * y) + rest  : 4 + (limit * y);
+                        int to = y == (rows) && rest == 0 ? 0 : y == (rows) ? (limit * y) + rest : 4 + (limit * y);
                         if (to == 0) { return; };
                         <tr>
                             <th>Mail</th>
@@ -40,7 +40,7 @@
 
                             {
 
-                                <td>@Model[z].date</td>
+                                <td>@Model[z].date.ToString("yyyy-MM-dd")</td>
                             }
                         </tr>
                         <tr>

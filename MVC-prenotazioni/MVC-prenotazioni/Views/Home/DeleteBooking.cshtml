@@ -3,7 +3,11 @@
     ViewBag.Title = "Delete Bookings";
 }
 <h2>@ViewBag.Title</h2>
-
+@if (ViewBag.Msg != null)
+{
+    <h3>@ViewBag.Msg</h3>
+}
+</hr>
 <div class="container">
     <div class="row align-content-center">
         <div class="col-lg-12">
@@ -14,7 +18,7 @@
                     int rows = Model.Count / limit;
                     for (int y = 0; y <= rows; y++)
                     {
-                        int to = y == (rows) &&  rest == 0 ? 0 : y == (rows) ? (limit * y) + rest  : 4 + (limit * y);
+                        int to = y == (rows) && rest == 0 ? 0 : y == (rows) ? (limit * y) + rest : 4 + (limit * y);
                         if (to == 0) { return; };
 
                         <tr>
@@ -33,7 +37,7 @@
 
                             {
 
-                                <td>@Model[z].date</td>
+                                <td>@Model[z].date.ToString("yyyy-MM-dd")</td>
                             }
                         </tr>
                         <tr>
