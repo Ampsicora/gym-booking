@@ -9,15 +9,21 @@ using System.Web.Http;
 
 namespace API_prenotazioni.Controllers
 {
+    /// <summary>
+    /// Crud Operations Controller.
+    /// </summary>
     public class ValuesController : ApiController
     {
+        /// <summary>
+        /// Gets all the bookings saved in the database.
+        /// </summary>
         [Route("api/values")]
         public List<booking> Get()
         {
             List<Booking> res;
             using (var db = new palestraEntities())
             {
-                res = db.Booking.OrderBy(p => p.date).ToList();
+                res = db.Booking.OrderBy(p => p.date).ThenBy(p => p.begin_time).ToList();
 
                 var config = new MapperConfiguration(cfg =>
                 {
@@ -33,6 +39,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
+        /// <summary>
+        /// Get if a registered user is already subscribed to the gym (a.k.a booking time price = 0).
+        /// </summary>
         [Route("api/values/{mail}")]
         [HttpGet]
         public string IsUserSubscribed(string mail)
@@ -43,8 +52,9 @@ namespace API_prenotazioni.Controllers
                 return res != null ? res.subscribed.ToString() : "0";
             }
         }
-
-        // GET api/values/bookingsperuser/mail => get all bookings per user
+        /// <summary>
+        /// Gets all the bookings per user, searched by user mail.
+        /// </summary>
         [Route("api/values/bookingsperuser/{mail}")]
         [HttpGet]
         public List<booking> Get(string mail)
@@ -52,7 +62,9 @@ namespace API_prenotazioni.Controllers
             List<Booking> res;
             using (var db = new palestraEntities())
             {
-                res = db.Booking.Where(p => p.email_user == mail).ToList();
+                res = db.Booking.Where(p => p.email_user == mail)
+                    .OrderBy(p => p.date).ThenBy(p => p.begin_time)
+                    .ToList();
 
                 var config = new MapperConfiguration(cfg =>
                 {
@@ -68,7 +80,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
-
+        /// <summary>
+        /// Gets all the rooms of the gym.
+        /// </summary>
         [Route("api/values/getrooms")]
         public List<room> GetRooms()
         {
@@ -89,8 +103,9 @@ namespace API_prenotazioni.Controllers
                 return bookings;
             }
         }
-
-        // POST api/values
+        /// <summary>
+        /// Post, if possible, a new booking.
+        /// </summary>
         [Route("api/values/newbooking")]
         public HttpResponseMessage Post([FromBody]booking b)
         {
@@ -121,9 +136,10 @@ namespace API_prenotazioni.Controllers
             }
 
         }
+        /// <summary>
+        /// Update, if possible, a booking.
+        /// </summary>
         [Route("api/values/updatebooking")]
-
-        // PUT api/values/5
         public HttpResponseMessage Put([FromBody]booking b)
         {
             using (var db = new palestraEntities())
@@ -131,7 +147,8 @@ namespace API_prenotazioni.Controllers
                 var res2 = db.Booking.Where(p => p.email_user.Equals(b.email_user) && p.id == b.id).FirstOrDefault();
                 if (res2 == null) return new HttpResponseMessage(HttpStatusCode.NotFound);
                 var res = db.Booking.Where(p =>
-                                           p.id_room == b.id_room
+                                           p.id != b.id
+                                           && p.id_room == b.id_room
                                            && p.date.Equals(b.date)
                                            && p.begin_time < b.end_time
                                            && p.end_time > b.begin_time)
@@ -152,8 +169,9 @@ namespace API_prenotazioni.Controllers
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
         }
-
-        // DELETE api/values/5
+        /// <summary>
+        /// Delete, if possible, a booking.
+        /// </summary>
         [Route("api/values/{mail}/{id}")]
         public int Delete(string mail, int id)
         {

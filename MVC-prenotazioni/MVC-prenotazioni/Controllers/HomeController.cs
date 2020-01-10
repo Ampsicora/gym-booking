@@ -3,10 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_prenotazioni.Controllers
@@ -15,7 +13,6 @@ namespace MVC_prenotazioni.Controllers
     {
         public ActionResult Index()
         {
-            
             ViewBag.Message = TempData["msg"];
             List<room> ls = new List<room>();
             using (var conn = new HttpClient())
@@ -33,19 +30,12 @@ namespace MVC_prenotazioni.Controllers
             ViewBag.Rooms = ls;
             return View();
         }
-
         [HttpPost]
-        public ActionResult PostIndex()
+        public ActionResult PostBooking()
         {
             var test = HttpContext.Request.Form;
-            TimeSpan interval;
-            if (ValidationData(test).Equals(new TimeSpan()))
-            {
-                return RedirectToAction("Index");
-            } else
-            {
-                interval = ValidationData(test);
-            }
+            TimeSpan interval = ValidationData(test);
+            if (interval.Equals(new TimeSpan())) return RedirectToAction("Index");
             using (var conn = new HttpClient())
             {
                 booking b = new booking()
@@ -55,34 +45,29 @@ namespace MVC_prenotazioni.Controllers
                     date = DateTime.Parse(test.Get("day")),
                     begin_time = TimeSpan.Parse(test.Get("start")),
                     end_time = TimeSpan.Parse(test.Get("endtime")),
-                    equipment = bool.Parse(test.Get("equipment")),
+                    equipment = test.Get("equipment") == "on" ? true : false,
                 };
                 var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
                 req.Wait();
-                string sub = "";
                 if (req.Result.IsSuccessStatusCode)
                 {
                     var subscribed = req.Result.Content.ReadAsStringAsync();
                     subscribed.Wait();
-                    sub = subscribed.Result;
+                    string sub = subscribed.Result;
                     if (sub == "0") return RedirectToAction("Index");
-                } else
-                {
-                    return RedirectToAction("Index");
-                }
-                b.price = (decimal)((sub == "\"False\"" ?  (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
-                StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
-                var req2 = conn.PostAsync(@"https://localhost:44360/api/values/newbooking", content);
-                req2.Wait();
-                TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + b.price
+                    b.price = (decimal)((sub == "\"False\"" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
+                    var req2 = conn.PostAsync(@"https://localhost:44360/api/values/newbooking", content);
+                    req2.Wait();
+                    TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + string.Format("{0:C}", b.price)
                                                                     : "I'm sorry, your booking wasn't confirmed.";
+                }
             }
-
             return RedirectToAction("Index");
         }
-
         public ActionResult DeleteBooking()
         {
+            ViewBag.Msg = TempData["msg"];
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
@@ -100,7 +85,7 @@ namespace MVC_prenotazioni.Controllers
         }
         [HttpGet]
         public ActionResult Delete(int id)
-        {            
+        {
             using (var conn = new HttpClient())
             {
                 var req = conn.DeleteAsync(@"https://localhost:44360/api/values/" + HttpContext.User.Identity.Name + "/" + id);
@@ -108,13 +93,13 @@ namespace MVC_prenotazioni.Controllers
                 var res = req.Result;
                 var t = res.Content.ReadAsStringAsync();
                 t.Wait();
-                ViewBag.Message = t.Result.Equals("1") ? "Delete Successfull" : "Delete wasn't performed.";
+                TempData["msg"] = t.Result.Equals("1") ? "Delete Successfull" : "Delete wasn't performed.";
             }
             return RedirectToAction("DeleteBooking");
         }
-
         public ActionResult UpdateBooking()
         {
+            ViewBag.Msg = TempData["msg"];
             List<booking> ls = new List<booking>();
             using (var conn = new HttpClient())
             {
@@ -139,17 +124,15 @@ namespace MVC_prenotazioni.Controllers
             }
             return View(ls);
         }
+        [HttpPost]
         public ActionResult Update()
         {
             var test = HttpContext.Request.Form;
-            TimeSpan interval;
-            if (ValidationData(test).Equals(new TimeSpan()))
+            TimeSpan interval = ValidationData(test);
+            if (interval.Equals(new TimeSpan()))
             {
+                TempData["msg"] = "You tried.";
                 return RedirectToAction("UpdateBooking");
-            }
-            else
-            {
-                interval = ValidationData(test);
             }
             using (var conn = new HttpClient())
             {
@@ -161,32 +144,26 @@ namespace MVC_prenotazioni.Controllers
                     date = DateTime.Parse(test.Get("day")),
                     begin_time = TimeSpan.Parse(test.Get("start")),
                     end_time = TimeSpan.Parse(test.Get("endtime")),
-                    equipment = bool.Parse(test.Get("equipment")),
+                    equipment = test.Get("equipment") == "on" ? true : false
                 };
                 var req = conn.GetAsync(@"https://localhost:44360/api/values/" + b.email_user);
                 req.Wait();
-                string sub = "";
+
                 if (req.Result.IsSuccessStatusCode)
                 {
                     var subscribed = req.Result.Content.ReadAsStringAsync();
                     subscribed.Wait();
-                    sub = subscribed.Result;
+                    string sub = subscribed.Result;
                     if (sub == "0") return RedirectToAction("Index");
-                }
-                else
-                {
-                    return RedirectToAction("Index");
-                }
-                b.price = (decimal)((sub == "\"False\"" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
-                StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
-                var req2 = conn.PutAsync(@"https://localhost:44360/api/values/updatebooking", content);
-                req2.Wait();
-                TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + b.price
+                    b.price = (decimal)((sub == "\"False\"" ? (interval.TotalMinutes / 30) * 7 : 0) + (!b.equipment ? 3 : 0));
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(b), Encoding.UTF8, "application/json");
+                    var req2 = conn.PutAsync(@"https://localhost:44360/api/values/updatebooking", content);
+                    req2.Wait();
+                    TempData["msg"] = req2.Result.IsSuccessStatusCode ? "Successfully Booked. Total Price is: " + string.Format("{0:C}", b.price)
                                                                     : "I'm sorry, your booking wasn't confirmed.";
+                }
             }
-
-            return RedirectToAction("Index");
-
+            return RedirectToAction("UpdateBooking");
         }
         public ActionResult AllBookings()
         {
@@ -207,19 +184,16 @@ namespace MVC_prenotazioni.Controllers
         }
         protected TimeSpan ValidationData(NameValueCollection test)
         {
-            if (test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null
-                || DateTime.Parse(test.Get("day")) < DateTime.Now)
+            if (!(test.Get("room") is null || test.Get("start") is null || test.Get("endtime") is null ||
+                DateTime.Parse(test.Get("day")) < DateTime.Now ||
+                (DateTime.Parse(test.Get("day")) == DateTime.Now  && TimeSpan.Parse(test.Get("start")) < DateTime.Now.TimeOfDay)
+               ))
             {
-                TempData["msg"] = "Error posting your booking, please check your data.";
-                return new TimeSpan();
+                TimeSpan interval = TimeSpan.Parse(test.Get("endtime")) - TimeSpan.Parse(test.Get("start"));
+                if (interval.TotalMinutes > 0) return interval;
             }
-            TimeSpan interval = TimeSpan.Parse(test.Get("endtime")) - TimeSpan.Parse(test.Get("start"));
-            if (interval.TotalMinutes <= 0)
-            {
-                TempData["msg"] = "Error posting your booking, please check your data.";
-                return new TimeSpan();
-            }
-            return interval;
+            TempData["msg"] = "Error posting your booking, please check your data.";
+            return new TimeSpan();
         }
     }
 }

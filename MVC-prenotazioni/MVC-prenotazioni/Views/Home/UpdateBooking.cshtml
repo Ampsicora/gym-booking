@@ -3,72 +3,72 @@
     ViewBag.Title = "Update Bookings";
 }
 <h2>@ViewBag.Title</h2>
-<h3>@ViewBag.Message</h3>
+@if (ViewBag.Msg != null)
+{
+    <h3 class="text-danger center-block">@ViewBag.Msg</h3>
+}
+<hr />
 <div>
-
-
     @foreach (var mod in @Model)
     {
-    using (Html.BeginForm("Update", "Home", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-        <div class="form-horizontal col-lg-4">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.Hidden("id", mod.id.ToString())
-            <div class="form-group">
-                <label for="room" class="control-label col-md-3">Room</label>
-                <div class="col-md-9 text-center">
-                    <select name="room">
-                        @if (ViewBag.Rooms != null)
-                        {
-                            foreach (var x in ViewBag.Rooms)
+        using (Html.BeginForm("Update", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal col-lg-4">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.Hidden("id", mod.id.ToString())
+                <div class="form-group">
+                    <label for="room" class="control-label col-md-3">Room</label>
+                    <div class="col-md-9 text-center">
+                        <select name="room">
+                            @if (ViewBag.Rooms != null)
                             {
-                                string sel = x.id == mod.id_room ? "selected" : "";
-                                <option @sel value="@x.id">Room @x.id @x.name - Description: @x.description</option>
+                                foreach (var x in ViewBag.Rooms)
+                                {
+                                    string sel = x.id == mod.id_room ? "selected" : "";
+                                    <option @sel value="@x.id">@x.id) @x.name - @x.description</option>
+                                }
                             }
-                        }
-                    </select>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="day" class="control-label col-md-3">Date</label>
+                    <div class="col-md-9 text-center">
+                        <input type="date" name="day" value="@mod.date.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start" class="control-label col-md-3">Start</label>
+                    <div class="col-md-9 text-center">
+                        <input type="time" id="startime" name="start" value="@mod.begin_time.ToString()" min="09:00" max="17:30" step="1800" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="endtime" class="control-label col-md-3">End</label>
+                    <div class="col-md-9 text-center">
+                        <input type="time" name="endtime" value="@mod.end_time.ToString()" min="09:30" max="18:00" step="1800" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="equipment" class="control-label col-md-3">Equipment</label>
+                    <div class="col-md-9 text-center">
+                        @{string check = mod.equipment ? "checked" : "";}
+                        <input type="checkbox" @check name="equipment" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="price" class="control-label col-md-3">Price</label>
+                    <div class="col-md-9 text-center">
+                        <p>@String.Format("{0:C}", mod.price)</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 text-center col-md-9">
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="day" class="control-label col-md-3">Date</label>
-                <div class="col-md-9 text-center">
-                    <input type="date" name="day" value="@mod.date.ToString("yyyy-MM-dd")" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="start" class="control-label col-md-3">Start</label>
-                <div class="col-md-9 text-center">
-                    <input type="time" id="startime" name="start" value="@mod.begin_time.ToString()" min="09:00" max="17:30" step="1800" required />
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="endtime" class="control-label col-md-3">End</label>
-                <div class="col-md-9 text-center">
-                    <input type="time" name="endtime" value="@mod.end_time.ToString()" min="09:30" max="18:00" step="1800" required />
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="equipment" class="control-label col-md-3">Equipment</label>
-                <div class="col-md-9 text-center">
-                    <input type="checkbox" value="@mod.equipment.ToString()" name="equipment" />
-                    <input type="hidden" value="false" name="equipment" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="price" class="control-label col-md-3">Price</label>
-                <div class="col-md-9 text-center">
-                    <p>@String.Format("{0:C}", mod.price)</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-3 text-center col-md-9">
-                    <input type="submit" value="Save" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
-
-    }
-
+        }
     }
 </div>
