@@ -1,4 +1,4 @@
-# prenotazioni-palestre
+# Gym Booking
 ## exercise project for C# Course - teacher: E. Quarello
 ### ITS ICT Piemonte Integrated Backend Services (2018-2020)
 
